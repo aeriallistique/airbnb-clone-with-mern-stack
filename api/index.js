@@ -126,13 +126,12 @@ app.post('/places',  (req, res)=>{
   jwt.verify(token, jwtSecret, {}, async (err,userData)=>{
     if(err)throw err;
     const placeDoc = await Place.create({
-      owner: req.userData.id,
+      owner: userData.id,
       title, address, addedPhotos, description, perks, 
-      extraInfo, checkIn, checkOut, maxGuests
+      extraInfo, checkIn, checkOut, maxGuests,
     });
+    res.json(placeDoc)
   });
-
-  res.json(placeDoc)
 })
 
 app.listen(4000);

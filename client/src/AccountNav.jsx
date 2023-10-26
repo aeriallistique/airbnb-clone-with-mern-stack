@@ -1,10 +1,15 @@
+import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 export default function AccountNav(){
-
-  function linkCLasses(type=null){
+  const {pathname} = useLocation();
+  let subpage = pathname.split('/')?.[2];
+  if(subpage === undefined){
+    subpage = 'profile';
+  }
+  function linkCLasses(type=null){ 
     let classes= 'inline-flex gap-1 py-2 px-6 rounded-full';
-    if(type=== false){
+    if(type=== subpage){
       classes += ' bg-primary text-white '
     }else{
       classes += ' bg-gray-200'
