@@ -8,7 +8,8 @@ const Place = require('./models/Place.js')
 const cookieParser = require('cookie-parser');
 const imageDownloader = require('image-downloader')
 const multer = require('multer')
-const fs = require('fs')
+const fs = require('fs');
+const { resolveObjectURL } = require('buffer');
 require('dotenv').config();
 const app = express();
 
@@ -21,7 +22,8 @@ app.use('/uploads', express.static(__dirname+'/uploads'))
 
 app.use(cors({
   credentials:true,
-  origin: 'http://127.0.0.1:5173',
+  origin: true, 
+  // 'http://127.0.0.1:5173',
 }))
 
 
@@ -127,11 +129,24 @@ app.post('/places',  (req, res)=>{
     if(err)throw err;
     const placeDoc = await Place.create({
       owner: userData.id,
-      title, address, addedPhotos, description, perks, 
+      title, address, photos:addedPhotos, description, perks, 
       extraInfo, checkIn, checkOut, maxGuests,
     });
     res.json(placeDoc)
   });
+})
+
+app.get('/places', (req, res)=>{
+  const {token} = req.cookies;
+  jwt.verify(token, jwtSecret, {}, async (err,userData)=>{
+   const {id} = userData;
+   res.json( await Place.find({owner: id}))
+   })
+})
+
+app.get('/places/:id', async (req,res)=>{
+  const {id} = req.params;
+  res.json(await Place.findById(id))
 })
 
 app.listen(4000);
