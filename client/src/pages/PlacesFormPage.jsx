@@ -29,6 +29,14 @@ export default function PlacesFormPage(){
     axios.get('/places/'+id).then(response=>{
       const {data} = response;
       setTitle(data.title)
+      setAddress(data.address)
+      setAddedPhotos(data.photos)
+      setDescription(data.description)
+      setPerks(data.perks)
+      setExtraInfo(data.extraInfo)
+      setCheckIn(data.checkIn)
+      setCheckOut(data.checkOut)
+      setMaxGuests(data.maxGuests)
     })
 
   },[id])
@@ -54,10 +62,9 @@ export default function PlacesFormPage(){
     )
   }
 
-  async function addNewPlace(ev){
+  async function savePlace(ev){
     ev.preventDefault();
-
-    await axios.post('/places', {title, 
+    const placeData = {title, 
       address, 
       addedPhotos, 
       description, 
@@ -65,9 +72,22 @@ export default function PlacesFormPage(){
       extraInfo, 
       checkIn, 
       checkOut, 
-      maxGuests});
+      maxGuests};
 
-    setRedirect(true)
+
+    if(id){
+      // update
+      await axios.put('/places', {id, ...placeData});
+  
+      setRedirect(true)
+    } else{
+      // new place
+      await axios.post('/places', placeData);
+  
+      setRedirect(true)
+    }
+
+    
   }
 
   if(redirect){
@@ -76,7 +96,7 @@ export default function PlacesFormPage(){
   return(
     <div>
       <AccountNav />
-          <form onSubmit={addNewPlace}>
+          <form onSubmit={savePlace}>
             {preInput("Title", "title for your place")}
             <input 
               type="text" 
