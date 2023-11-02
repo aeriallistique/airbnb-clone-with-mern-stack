@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom"
 import { useEffect, useState } from "react";
 import AccountNav from "../AccountNav";
 import axios from "axios";
+import PlaceImg from "../PlaceImg";
 
 
 export default function PlacesPage(){
@@ -28,9 +29,7 @@ export default function PlacesPage(){
           <Link to={'/account/places/'+place._id}>
           <div className="hover:bg-gray-200 flex gap-4 my-2 bg-gray-100 p-4 rounded-2xl cursor-pointer">
             <div className=" flex w-40 h-32 bg-gray-300 shrink-0">
-              {place.photos.length > 0 && (
-                <img className="object-cover w-full h-full"  src={'http://localhost:4000/uploads/'+place.photos[0]} alt=""/>
-              )}
+              <PlaceImg place={place} />
             </div>
             <div className="grow-0 shrink ">
             <h2 className="text-xl">{place.title}</h2>
