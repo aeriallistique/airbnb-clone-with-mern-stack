@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
 const User = require('./models/User.js')
 const Place = require('./models/Place.js')
+const Booking = require('./models/Booking.js')
 const cookieParser = require('cookie-parser');
 const imageDownloader = require('image-downloader')
 const multer = require('multer')
@@ -105,6 +106,16 @@ app.post('/upload-by-link', async(req, res)=>{
 
 const photosMiddleware = multer({dest: 'uploads/'});
 
+
+function getUserDataFromReq(req){
+  return newPromise((resolve, reject)=>{
+    jwt.verify(req.cookies.token, jwtSecret, {}, async (err,userData)=>{
+      if(err)throw err;
+      resolve(userData);
+    })
+  }); 
+}
+
 app.post('/upload', photosMiddleware.array('photos', 100), (req, res)=>{
   const uploadedFiles = [];
   for(let i=0; i < req.files.length; i++){
@@ -172,6 +183,25 @@ app.put('/places', async (req, res)=>{
 
 app.get('/places', async (req, res)=>{
   res.json(await Place.find());
+})
+
+app.post('/bookings', async  (req, res)=>{
+  const userData = await getUserDataFromReq(req);
+
+  const {place, checkIn, checkOut, numberOfGuests, name, phone, price } = req.body;
+  Booking.create({place, checkIn, checkOut, numberOfGuests,
+                  name, phone, price,
+                  user: userData.id })
+          .then((doc)=>{
+      res.json(doc)
+  }).catch((err)=>{throw err;})
+})
+
+
+
+app.get('/bookings', async(req, res)=>{
+ const userData = await getUserDataFromReq(req);
+ res.json( await Booking.find({user: userData.id}))
 })
 
 app.listen(4000);

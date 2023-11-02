@@ -6,6 +6,8 @@ import LoginPage from './pages/LoginPage';
 import ProfilePage from "./pages/ProfilePage"
 import PlacesPage from './pages/PlacesPage';
 import PlacesFormPage from './pages/PlacesFormPage';
+import BookingsPage from './pages/BookingsPage';
+import BookingPage from './pages/BookingPage';
 import Layout from './layout';
 import RegisterPage from './pages/RegisterPage';
 import PlacePage from './pages/PlacePage';
@@ -31,6 +33,8 @@ function App() {
           <Route path="/account/places/new" element={ <PlacesFormPage />} />
           <Route path="/account/places/:id" element={ <PlacesFormPage />} />
           <Route path="/place/:id" element={<PlacePage />} />
+          <Route path="/account/bookings" element={<BookingsPage />} />
+          <Route path="/account/bookings/:id" element={<BookingPage />} />
          
         </Route>
       </Routes> 
