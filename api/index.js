@@ -14,6 +14,10 @@ const { resolveObjectURL } = require('buffer');
 require('dotenv').config();
 const app = express();
 
+////////////////////////////// THINGS I MODIFIED ///////////////
+const PlacesRoute = require('./routes/PlacesRoute.js')
+
+
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'hfjskwnrcdjakdqoihf'
@@ -43,6 +47,8 @@ app.get('/test', (req, res)=>{
   res.json('test ok')
 });
 
+////////////////////////////// THINGS I MODIFIED ///////////////
+app.use('/places', PlacesRoute);
 
 
 
@@ -131,23 +137,7 @@ app.post('/upload', photosMiddleware.array('photos', 100), (req, res)=>{
   res.json(uploadedFiles)
 })
 
-app.post('/places',  (req, res)=>{
-  const {token} = req.cookies;
-  const {title, 
-    address, addedPhotos, description, perks, 
-    extraInfo, checkIn, checkOut, maxGuests,price
-  } = req.body;
-
-  jwt.verify(token, jwtSecret, {}, async (err,userData)=>{
-    if(err)throw err;
-    const placeDoc = await Place.create({
-      owner: userData.id,
-      title, address, photos:addedPhotos, description, perks, 
-      extraInfo, checkIn, checkOut, maxGuests,price,
-    });
-    res.json(placeDoc)
-  });
-})
+// app.post('/places',  )
 
 app.get('/user-places', (req, res)=>{
   const {token} = req.cookies;
@@ -157,31 +147,10 @@ app.get('/user-places', (req, res)=>{
    })
 })
 
-app.get('/places/:id', async (req,res)=>{
-  const {id} = req.params;
-  res.json(await Place.findById(id))
-})
+// app.get('/places/:id', )
 
 
-app.put('/places', async (req, res)=>{
-  const {token} = req.cookies;
-  const {id, title,address, addedPhotos, description,
-         perks, extraInfo, checkIn, checkOut, 
-         maxGuests,price,} = req.body;
-  jwt.verify(token, jwtSecret, {}, async (err,userData)=>{
-    if(err)throw err;
-
-    const placeDoc = await Place.findById(id); 
-    if(userData.id === placeDoc.owner.toString() ){
-      placeDoc.set({
-        title, address, photos:addedPhotos, description, perks, 
-        extraInfo, checkIn, checkOut, maxGuests,price,
-      });
-      await placeDoc.save()
-      res.json("ok")
-    }
-    })
-})
+// app.put('/places', )
 
 app.get('/places', async (req, res)=>{
   res.json(await Place.find());
